@@ -16,7 +16,7 @@ app.use(express.static("public"));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let items = ["Do stuff","eat stuff","break stuff"];
+let items = [{task: "Do stuff", done: 1},{task: "eat stuff", done: 0},{task: "break stuff", done: 0}];
 let workList = [];
 
 app.get("/", (req,res) => {
