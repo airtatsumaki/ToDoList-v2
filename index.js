@@ -4,6 +4,8 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 // since getDate is exported as default we can't use a named export import {functionName} from "./date.js";
 import {getDate, getDay} from "./date.js";
+import mongoose from 'mongoose';
+mongoose.set('strictQuery', true);
 
 const app = express();
 // instead of body-parser
@@ -16,7 +18,17 @@ app.use(express.static("public"));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let items = [{task: "Do stuff", done: 1},{task: "eat stuff", done: 0},{task: "break stuff", done: 0}];
+await mongoose.connect('mongodb://localhost:27017/todolistdb');
+const itemsSchema = new mongoose.Schema({
+  task : {type: String, unique: true, dropDups: true, required : true},
+  done : {type: Number, default: 0}
+});
+const Item = mongoose.model("Item", itemsSchema);
+//const item1 = new Item({task: "Do stuff"});
+//item1.save();
+const items = await Item.find();
+console.log(items);
+//let items = [{task: "Do stuff", done: 1},{task: "eat stuff", done: 0},{task: "break stuff", done: 0}];
 let workList = [];
 
 app.get("/", (req,res) => {
@@ -42,10 +54,25 @@ app.post("/", (req, res) => {
   }
   else{
     if (req.body.task.trim() !== ""){
-      items.push(req.body.task);
+      const newItem = new Item({task: req.body.task});
+      newItem.save();
+      items.push(newItem);
     }
     res.redirect("/");
   }
+});
+
+app.post("/updateStatus", (req, res) => {
+  console.log("we posted?");
+  console.log(req.body);
+  for(let x = 0; x < items.length; x++){
+    if (items[x].task == req.body.task){
+      let theItem = items[x];
+      theItem.done = req.body.done;
+      theItem.save();
+    }
+  }
+  res.redirect("/");
 });
 
 app.listen(process.env.PORT || 3000, () => console.log("Server is running on port 3000"));

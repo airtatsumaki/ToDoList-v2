@@ -9,9 +9,9 @@
     <% for(let x = 0; x < todolist.length; x++){ %>
       <div class="item">
         <% if (todolist[x].done == 0) {%>
-          <input type="checkbox">
+          <input type="checkbox" name="done" value="0">
         <% } else { %>
-          <input type="checkbox" checked="true">
+          <input type="checkbox" checked="true" name="done" value="1">
         <% } %>
         <p><%= todolist[x].task %></p>
       </div>
