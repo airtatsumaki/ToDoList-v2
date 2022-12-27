@@ -1,0 +1,23 @@
+<%- include('../partials/page_head') -%>
+
+<body>
+  <div class="box">
+    <h1 id="heading"><%= title %></h1>
+  </div>
+
+  <div class="box">
+    <% for(let x = 0; x < todolist.length; x++){ %>
+      <div class="item">
+        <input type="checkbox">
+        <p><%= todolist[x] %></p>
+      </div>
+    <% } %>
+
+    <form class="item" action="/" method="post">
+      <input type="text" name="task" id="task" placeholder="New Item" autocomplete="off">
+      <button type="submit" name="button" value="<%= title %>">+</button>
+    </form>
+  </div>
+</body>
+
+<%- include('../partials/page_tail') -%>
