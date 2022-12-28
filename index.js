@@ -26,13 +26,17 @@ const itemsSchema = new mongoose.Schema({
 const Item = mongoose.model("Item", itemsSchema);
 //const item1 = new Item({task: "Do stuff"});
 //item1.save();
-const items = await Item.find();
+let items = [];
 console.log(items);
 //let items = [{task: "Do stuff", done: 1},{task: "eat stuff", done: 0},{task: "break stuff", done: 0}];
 let workList = [];
 
-app.get("/", (req,res) => {
-  console.log(getDay());
+app.get("/", async (req,res) => {
+  // console.log(getDay());
+  console.log("GET");
+  items = await Item.find();
+  console.log(items);
+  console.log("render index");
   res.render("pages/index", {title: getDate(), todolist: items, action: "/"});
 });
 
@@ -62,16 +66,43 @@ app.post("/", (req, res) => {
   }
 });
 
-app.post("/updateStatus", (req, res) => {
-  console.log("we posted?");
+app.post("/deleteItem", async function (req, res) {
+  console.log("we posted to delete?");
   console.log(req.body);
+  let theItem;
   for(let x = 0; x < items.length; x++){
     if (items[x].task == req.body.task){
-      let theItem = items[x];
-      theItem.done = req.body.done;
-      theItem.save();
+      theItem = items[x];
+      break;
     }
   }
+  const result = await Item.deleteOne({task: req.body.deleteTask});
+  if(result){
+    console.log("should redirect");
+    res.redirect("/");
+  }
+});
+
+app.post("/updateStatus", (req, res) => {
+  console.log("we posted to update?");
+  console.log(req.body);
+  let theItem;
+  for(let x = 0; x < items.length; x++){
+    if (items[x].task == req.body.updateTask){
+      theItem = items[x];
+      break;
+    }
+  }
+  console.log(theItem);
+  if(req.body.done){
+    console.log("item is done");
+    theItem.done = 1;
+  }
+  else{
+    console.log("item NOT done");
+    theItem.done = 0;;
+  }
+  theItem.save();
   res.redirect("/");
 });
 

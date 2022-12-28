@@ -1,23 +1,34 @@
 <%- include('../partials/page_head') -%>
 
 <body>
-  <div class="box">
+  <div class="boxHeader">
     <h1 id="heading"><%= title %></h1>
   </div>
 
   <div class="box">
     <% for(let x = 0; x < todolist.length; x++){ %>
       <div class="item">
-        <% if (todolist[x].done == 0) {%>
-          <input type="checkbox" name="done" value="0">
-        <% } else { %>
-          <input type="checkbox" checked="true" name="done" value="1">
-        <% } %>
-        <p><%= todolist[x].task %></p>
+        <form class="other" action="/updateStatus" name="updateForm<%= x %>" method="post">
+          <input class="noShow" type="text" name="updateTask" id="updateTask" value="<%= todolist[x].task %>">
+          <% if (todolist[x].done == 0) {%>
+            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" name="done" itemName="<%= todolist[x].task %>">
+          <% } else { %>
+            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" checked="true" name="done" itemName="<%= todolist[x].task %>">
+          <% } %>
+          <p class="theItem"><%= todolist[x].task %></p>
+        </form>
+        <div class="deleteContainer">
+          <form action="/deleteItem" name="deleteForm<%= x %>" method="post">
+            <input class="noShow" type="text" name="deleteTask" id="deleteTask" value="<%= todolist[x].task %>">
+            <a href="#" onclick="document.forms['deleteForm<%= x %>'].submit(); return false;" value="<%= todolist[x].task %>">
+              <img class="bin" src="img/trash-can-solid.svg" />
+            </a>
+          </form>
+        </div>
       </div>
     <% } %>
 
-    <form class="item" action="/" method="post">
+    <form class="item" action="/" method="post" name="newItemForm">
       <input type="text" name="task" id="task" placeholder="New Item" autocomplete="off">
       <button type="submit" name="button" value="<%= title %>">+</button>
     </form>
