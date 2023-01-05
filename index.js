@@ -60,8 +60,10 @@ app.get("/:customList", async (req, res) => {
       items: []
     });
     getList ? null : (await newlist.save());
-    const listToShow = getList ? getList : newlist;
-    res.render("pages/index", {title: listToShow.name, todolist: listToShow.items});
+    res.render("pages/index", {
+      title: getList ? getList.name : newlist.name, 
+      todolist: getList ? getList.items : newlist.items
+    });
   } catch (error) {
     console.log(error);
   }
