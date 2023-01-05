@@ -42,30 +42,28 @@ app.get("/about", (req,res) => {
 
 //done
 app.get("/", async (req,res) => {
-  const items = await Item.find();
-  if(items){
-    res.render("pages/index", {title: getDate(), todolist: items, action: "/"});
-  } else {
-    res.render("pages/index", {title: getDate(), todolist: [], action: "/"});
+  try {
+    const items = await Item.find();
+    res.render("pages/index", {title: getDate(), todolist: items ? items : [], action: "/"});
+  } catch (error) {
+    console.log(error);
   }
 });
 
 //done
 app.get("/:customList", async (req, res) => {
-  const getList = await List.findOne({name: req.params.customList});
-  if(getList){
-    res.render("pages/index", {title: getList.name, todolist: getList.items});
-  } else {
-    try{
-      const newlist = new List({
-        name: req.params.customList,
-        items: []
-      });
-      await newlist.save();
-      res.render("pages/index", {title: newlist.name, todolist: newlist.items});
-    } catch (err){
-      console.log(err);    
-    }
+  try {
+    const listName = req.params.customList;
+    const getList = await List.findOne({name: listName});
+    const newlist = new List({
+      name: listName,
+      items: []
+    });
+    getList ? null : (await newlist.save());
+    const listToShow = getList ? getList : newlist;
+    res.render("pages/index", {title: listToShow.name, todolist: listToShow.items});
+  } catch (error) {
+    console.log(error);
   }
 });
 
@@ -78,7 +76,7 @@ app.post("/", async (req, res) => {
     const newItem = new Item({task: itemToAdd});
     getList ? getList.items.push(newItem) : null;
     await (getList ? getList.save() : newItem.save());
-    getList ? res.redirect("/" + listName) : res.redirect("/");
+    res.redirect(getList ? "/" + listName : "/");
   } catch (error) {
     console.error(error);
   }
@@ -86,12 +84,11 @@ app.post("/", async (req, res) => {
 
 // done
 app.post("/updateStatus", async (req, res) => {
-  // console.log(req.body);
   try{
     const listName = req.body.listName;
     const updateTask = req.body.updateTask;
     const done = req.body.done;
-    if(listName == getDate()){
+    if(listName === getDate()){
       let theItem = await Item.findOne({_id: updateTask});
       theItem.done = done ? 1 : 0;
       await theItem.save();
@@ -100,7 +97,6 @@ app.post("/updateStatus", async (req, res) => {
       let theList = await List.findOne({name: listName});
       let theItem = theList.items.id(updateTask);
       theItem.done = done ? 1 : 0;
-      // console.log(theList);
       await theList.save();
       res.redirect("/" + req.body.listName);
     }
@@ -117,8 +113,7 @@ app.post("/deleteItem", async (req, res) => {
     const result = listName === getDate() ? null : await List.findOne({name: listName});
     listName === getDate() ? await Item.deleteOne({_id: deleteTask}) : result.items.id(deleteTask).remove();
     await (result ? result.save() : null);
-    result ? res.redirect("/" + listName) : res.redirect("/");
-    // res.redirect(`/${listName || ""}`);
+    res.redirect(result ? "/" + listName : "/");
   } catch (error) {
     console.error(error);
   }
