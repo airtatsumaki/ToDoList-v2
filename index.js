@@ -18,10 +18,10 @@ app.use(express.static("public"));
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
-await mongoose.connect('mongodb://localhost:27017/todolistdb');
+// await mongoose.connect('mongodb://localhost:27017/todolistdb');
 
 // connection for docker image
-// await mongoose.connect('mongodb://db:27017/todolistdb');
+await mongoose.connect('mongodb://db:27017/todolistdb');
 
 const itemsSchema = new mongoose.Schema({
   task : {type: String, required: true},
