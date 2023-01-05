@@ -9,19 +9,19 @@
     <% for(let x = 0; x < todolist.length; x++){ %>
       <div class="item">
         <form class="other" action="/updateStatus" name="updateForm<%= x %>" method="post">
-          <input class="noShow" type="text" name="listName" id="listName" value="<%= title %>">
-          <input class="noShow" type="text" name="updateTask" id="updateTask" value="<%= todolist[x].task %>">
+          <input type="hidden" name="listName" id="listName" value="<%= title %>">
+          <input type="hidden" name="updateTask" id="updateTask" value="<%= todolist[x]._id %>">
           <% if (todolist[x].done == 0) {%>
-            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" name="done" itemName="<%= todolist[x].task %>">
+            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" name="done">
           <% } else { %>
-            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" checked="true" name="done" itemName="<%= todolist[x].task %>">
+            <input class="tickbox" type="checkbox" onChange="document.forms['updateForm<%= x %>'].submit(); return false;" checked="true" name="done">
           <% } %>
           <p class="theItem"><%= todolist[x].task %></p>
         </form>
         <div class="deleteContainer">
           <form action="/deleteItem" name="deleteForm<%= x %>" method="post">
-            <input class="noShow" type="text" name="listNameDel" id="listNameDel" value="<%= title %>">
-            <input class="noShow" type="text" name="deleteTask" id="deleteTask" value="<%= todolist[x]._id %>">
+            <input type="hidden" name="listNameDel" id="listNameDel" value="<%= title %>">
+            <input type="hidden" name="deleteTask" id="deleteTask" value="<%= todolist[x]._id %>">
             <a href="#" onclick="document.forms['deleteForm<%= x %>'].submit(); return false;" value="<%= todolist[x].task %>">
               <img class="bin" src="img/trash-can-solid.svg" />
             </a>
