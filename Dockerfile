@@ -15,12 +15,13 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
-CMD [ "npm", "start" ]
+EXPOSE 8080
+CMD [ "node", "index.js" ]
 
 # docker build . (build the image)
 # docker images (see the image that was created)
 # docker run -d -p 3000:3000 <IMAGE_ID> (run the image in a container)
 # docker ps (see running containers)
-# docker stop <IMAGE_ID> (stop the running container)
+# docker stop <CONTAINER_ID> (stop the running container)
+# docker rm <CONTAINER_ID> (delete the container)
 # docker rmi <IMAGE_ID> (delete the image)

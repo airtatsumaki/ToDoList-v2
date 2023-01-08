@@ -1,4 +1,6 @@
 import express from 'express';
+import * as dotenv from 'dotenv';
+dotenv.config();
 //__dirname for esm 
 // import path from 'path';
 // import {fileURLToPath} from 'url';
@@ -18,10 +20,15 @@ app.use(express.static("public"));
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
-// await mongoose.connect('mongodb://localhost:27017/todolistdb');
+//await mongoose.connect('mongodb://localhost:27017/todolistdb');
+
+//connect to mongodb-atlas
+const url = "mongodb+srv://naz:" + process.env.PASSWORD + "@cluster0.lgbc6oy.mongodb.net/todolistdb";
+// const uri = `mongodb+srv://naz:${process.env.PASSWORD}@cluster0.lgbc6oy.mongodb.net/?retryWrites=true/todolistdb`;
+await mongoose.connect(url);
 
 // connection for docker image
-await mongoose.connect('mongodb://db:27017/todolistdb');
+// await mongoose.connect('mongodb://db:27017/todolistdb');
 
 const itemsSchema = new mongoose.Schema({
   task : {type: String, required: true},
@@ -121,4 +128,4 @@ app.post("/deleteItem", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("Server is running on port 3000"));
+app.listen(process.env.PORT || 8080, () => console.log("Server is running on port 8080"));
